@@ -1,0 +1,184 @@
+
+
+sprintf(data_header_str,"P_O0.3/")
+sprintf(seed_str,"%04g",SEED)
+INCLUDE_FILE="variables1_par.mdl"
+CHECKPOINT_REALTIME = 23:50:00 NOEXIT
+
+
+TIME_STEP = dt
+
+ITERATIONS = it
+EFFECTOR_GRID_DENSITY = grid_density
+
+ACCURATE_3D_REACTIONS = TRUE
+MICROSCOPIC_REVERSIBILITY=TRUE
+
+
+SPACE_STEP= 0.002
+INTERACTION_RADIUS=0.002
+
+PARTITION_X=[[-0.3 TO 0.8 STEP 0.05]]
+PARTITION_Y=[[-0.3 TO 0.8 STEP 0.05]]
+PARTITION_Z=[[-0.01 TO 0.8 STEP 0.05]]
+
+/* --------- Mechanisms ------------- */
+
+INCLUDE_FILE="molecules.mdl"
+INCLUDE_FILE="mechanisms.mdl"
+
+/* ----- Define Physical Objects ------- */
+
+INCLUDE_FILE="bouton21.mdl"
+
+
+INSTANTIATE tissue OBJECT {
+
+ bouton OBJECT bouton {}
+
+    RELEASE_active  RELEASE_SITE
+  {
+
+      SHAPE=LIST
+
+	MOLECULE_POSITIONS {
+
+           Ca_HH.C0' [   0.015, 0.055, 1.5*fuzz]
+           Ca_HH.C0' [   0.015, 0.07, 1.5*fuzz]
+ 		Ca_HH.C0' [   0.015, 0.085, 1.5*fuzz]
+		Ca_HH.C0' [   0.015, 0.100, 1.5*fuzz]
+
+      	Ca_HH.C0' [   0.03, 0.055, 1.5*fuzz]
+           Ca_HH.C0' [   0.03, 0.07, 1.5*fuzz]
+		Ca_HH.C0' [   0.03, 0.085, 1.5*fuzz]
+		Ca_HH.C0' [   0.03, 0.100, 1.5*fuzz]
+
+      	Ca_HH.C0' [   0.045, 0.055, 1.5*fuzz]
+       	Ca_HH.C0' [   0.045, 0.07, 1.5*fuzz]
+		Ca_HH.C0' [   0.045, 0.085, 1.5*fuzz]
+       	Ca_HH.C0' [   0.045, 0.100, 1.5*fuzz]
+
+		Ca_HH.C0' [   0.06, 0.055, 1.5*fuzz]
+		Ca_HH.C0' [   0.06, 0.07, 1.5*fuzz]
+           Ca_HH.C0' [   0.06, 0.085, 1.5*fuzz]
+		Ca_HH.C0' [   0.06, 0.100, 1.5*fuzz]
+
+	}
+
+    	SITE_DIAMETER = 2*fuzz
+  }
+
+
+  RELEASE_fix.B  RELEASE_SITE
+  {
+    SHAPE = tissue.bouton.bouton0[ALL]
+    MOLECULE = fix.B
+    CONCENTRATION=fix_concentration * fix_bound_fraction
+  }
+  RELEASE_fix.U  RELEASE_SITE
+  {
+    SHAPE = tissue.bouton.bouton0[ALL]
+    MOLECULE = fix.U
+    CONCENTRATION=fix_concentration * fix_unbound_fraction
+  }
+
+RELEASE_ATP.B  RELEASE_SITE
+  {
+    SHAPE = tissue.bouton.bouton0[ALL]
+    MOLECULE = ATP.B
+    CONCENTRATION=ATP_concentration * ATP_bound_fraction
+  }
+  RELEASE_ATP.U  RELEASE_SITE
+  {
+    SHAPE = tissue.bouton.bouton0[ALL]
+    MOLECULE = ATP.U
+    CONCENTRATION=ATP_concentration * ATP_unbound_fraction
+  }
+
+
+/*
+
+RELEASE_EGTA.B  RELEASE_SITE
+  {
+    SHAPE = tissue.bouton.bouton0[ALL]
+    MOLECULE = EGTA.B
+    CONCENTRATION=EGTA_concentration * EGTA_bound_fraction
+  }
+  RELEASE_EGTA.U  RELEASE_SITE
+  {
+    SHAPE = tissue.bouton.bouton0[ALL]
+    MOLECULE = EGTA.U
+    CONCENTRATION=EGTA_concentration * EGTA_unbound_fraction
+  }
+*/
+
+RELEASE_boutonsensoraz0 CUBIC_RELEASE_SITE {
+  LOCATION = [0.045 ,  0.005 , 1.5 *fuzz]
+  LIGAND =  release_sensor0.a.x0
+  NUMBER_TO_RELEASE = 1
+  SITE_DIAMETER = [fuzz, fuzz, fuzz]
+}
+
+RELEASE_boutonsensoraz1 CUBIC_RELEASE_SITE {
+  LOCATION = [0.080 ,  0.07 , 1.5 *fuzz]
+  LIGAND =  release_sensor0.b.x0
+  NUMBER_TO_RELEASE = 1
+  SITE_DIAMETER = [fuzz, fuzz, fuzz]
+}
+
+RELEASE_boutonsensoraz2 CUBIC_RELEASE_SITE {
+  LOCATION = [0.03 ,  0.130 , 1.5 *fuzz]
+  LIGAND =  release_sensor0.c.x0
+  NUMBER_TO_RELEASE = 1
+  SITE_DIAMETER = [fuzz, fuzz, fuzz]
+}
+
+RELEASE_boutonsensoraz3 CUBIC_RELEASE_SITE {
+  LOCATION = [0.005 ,  0.085 , 1.5 *fuzz]
+  LIGAND =  release_sensor0.d.x0
+  NUMBER_TO_RELEASE = 1
+  SITE_DIAMETER = [fuzz, fuzz, fuzz]
+}
+
+
+
+  RELEASE_bouton_parvalbuminB  RELEASE_SITE
+  {
+    SHAPE = tissue.bouton.bouton0[ALL]
+    MOLECULE = parvalbumin.B
+    CONCENTRATION=parvalbumin_concentration * bound_parvalbumin_fraction
+  }
+  RELEASE_bouton_parvalbuminU  RELEASE_SITE
+  {
+    SHAPE = tissue.bouton.bouton0[ALL]
+    MOLECULE = parvalbumin.U
+    CONCENTRATION=parvalbumin_concentration * unbound_parvalbumin_fraction
+  }
+  RELEASE_bouton_parvalbuminM  RELEASE_SITE
+  {
+    SHAPE = tissue.bouton.bouton0[ALL]
+    MOLECULE = parvalbumin.M
+    CONCENTRATION=parvalbumin_concentration * mgbound_parvalbumin_fraction
+  }
+
+}
+
+
+REACTION_DATA_OUTPUT {
+
+  OUTPUT_BUFFER_SIZE=20
+
+  STEP = freq
+
+
+
+{ TRIGGER[ release_sensor0.a.x6, tissue.bouton.bouton0]} => "./Ca16_intern/Release50" & "/ " & seed_str & "_trig.dat"
+
+{ TRIGGER[release_sensor0.b.x6, tissue.bouton.bouton0] } => "./Ca16_intern/Release20" & "/ " & seed_str & "_trig.dat"
+
+{ TRIGGER[release_sensor0.c.x6, tissue.bouton.bouton0] } => "./Ca16_intern/Release30" & "/ " & seed_str & "_trig.dat"
+
+{ TRIGGER[release_sensor0.d.x6, tissue.bouton.bouton0] } => "./Ca16_intern/Release10" & "/ " & seed_str & "_trig.dat"
+
+
+}

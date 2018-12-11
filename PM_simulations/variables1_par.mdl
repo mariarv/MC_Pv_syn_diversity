@@ -1,0 +1,104 @@
+
+
+
+/*Diffusion rates */
+
+D_ATP=2e-6
+D_PV= 1.2e-7
+
+Cabase=50e-9
+
+D_Ca= 2.2e-6
+
+
+
+dt=5e-9
+it=0.4e6
+
+
+grid_density = 20000
+freq=100*dt
+
+/*FIXED Jonas
+fix_on=500e6 /*500 mM-1 ms-1*/
+fix_off=1e3 /* 1 ms-1 */
+*/
+
+fix_on=100e6 /*100 mM-1 ms-1*/
+fix_off=10e3 /* 10 ms-1 */
+
+EGTA_on=10.5e6
+EGTA_off=0.735
+
+A_K_on=500e6
+A_K_off=100e3
+
+Mgbase=0.0007
+kparvUB=4e8
+kparvUM=(1e6)
+kparvBU=4
+kparvMU=30
+
+
+parvalbumin_concentration =1e-3
+
+
+bound_parvalbumin_fraction=(Cabase * kparvMU * kparvUB)/(kparvBU * kparvMU + Cabase * kparvMU * kparvUB + kparvBU * kparvUM * Mgbase)
+
+mgbound_parvalbumin_fraction=(kparvBU * kparvUM * Mgbase)/(kparvBU * kparvMU + Cabase * kparvMU * kparvUB + kparvBU * kparvUM * Mgbase)
+
+unbound_parvalbumin_fraction=(kparvBU * kparvMU)/(kparvBU * kparvMU + Cabase * kparvMU * kparvUB + kparvBU * kparvUM * Mgbase)
+
+
+
+
+fix_bound_fraction=fix_on*(Cabase)/(fix_off+ fix_on*(Cabase))
+fix_unbound_fraction=1- fix_bound_fraction
+
+EGTA_bound_fraction= EGTA_on*(Cabase)/( EGTA_off + EGTA_on*(Cabase))
+EGTA_unbound_fraction=1-EGTA_bound_fraction
+
+ATP_bound_fraction= A_K_on*(Cabase)/( A_K_off + A_K_on * (Cabase))
+ATP_unbound_fraction=1-ATP_bound_fraction
+
+
+
+fix_concentration=4e-3
+
+EGTA_concentration=5e-3
+
+
+ATP_concentration=2e-4
+
+fuzz=1e-6
+gap_size=0.02
+dendrite_width=1.0
+dendrite_length=2.0
+
+
+bouton_width=0.8
+bouton_height=0.8
+
+mesh_width=0.5
+active_zone_width=0.2
+vesicle_diameter=0.03
+
+
+
+b=0.25
+
+kx01=5 * 1.27e8
+/*kx01=5 * 1.15e20*/
+
+kx10=15700
+kx12=4  * 1.27e8
+kx21=2 * 15700 * b
+kx23=3  * 1.27e8
+kx32=3 * 15700 *b *b
+kx34=2  * 1.27e8
+kx43=4 * 15700 * b * b *b
+kx45=  1.27e8
+kx54=5 * 15700 * b *b *b *b
+kx56=6000
+kx60=5
+
